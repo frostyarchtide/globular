@@ -3,16 +3,12 @@
 #include <cstdint>
 #include <functional>
 
-class World;
-
 struct Entity {
-    World* world;
     uint32_t id;
     uint32_t generation;
 
-    Entity(World* world, uint32_t id, uint32_t generation)
-        : world(world),
-        id(id),
+    Entity(uint32_t id, uint32_t generation)
+        : id(id),
         generation(generation)
     {}
 
