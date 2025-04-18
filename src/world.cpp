@@ -13,7 +13,7 @@ Entity World::create_entity() {
     }
 
     Entity entity(id, generation);
-    entities.emplace(id, generation);
+    entities.emplace(entity, std::vector<std::type_index>());
 
     return entity;
 }
@@ -29,6 +29,13 @@ bool World::destroy_entity(Entity entity) {
         generations.emplace(entity.id, 1);
     } else {
         generation_iter->second++;
+    }
+
+    for (auto& component : entities[entity]) {
+        auto components_iter = components.find(component);
+        if (components_iter == components.end()) return false;
+
+        if (!((IComponents*) components_iter->second.get())->remove(entity.id)) return false;
     }
 
     entities.erase(entity);
