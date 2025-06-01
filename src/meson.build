@@ -1,5 +1,7 @@
 sources = files(
+  'debug.cpp',
   'entity.cpp',
+  'window.cpp',
   'world.cpp',
   'math/vec2.cpp',
   'math/vec3.cpp',

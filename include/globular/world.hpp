@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <queue>
 
-struct Component {};
+class Component {};
 
 class IComponents {
 public:
@@ -17,6 +17,8 @@ public:
 
     virtual bool remove(size_t index) = 0;
 };
+
+class Resource {};
 
 template <typename T>
 class Components : public IComponents {
@@ -113,10 +115,41 @@ public:
         return vector;
     }
 
+    template <typename T, typename... Args>
+    T* create_resource(Args&&... args) {
+        auto resources_iter = resources.find(typeid(T));
+        if (resources_iter == resources.end()) {
+            resources.emplace(typeid(T), std::make_unique<T>(args...));
+
+            return (T*) resources.at(typeid(T)).get();
+        }
+
+        return nullptr;
+    }
+
+    template <typename T>
+    bool destroy_resource() {
+        auto resources_iter = resources.find(typeid(T));
+        if (resources_iter == resources.end()) return false;
+
+        resources.erase(typeid(T));
+
+        return true;
+    }
+
+    template <typename T>
+    T* get_resource() {
+        auto resources_iter = resources.find(typeid(T));
+        if (resources_iter == resources.end()) return nullptr;
+
+        return resources_iter->second;
+    }
+
 private:
     std::unordered_map<std::type_index, std::unique_ptr<IComponents>> components;
     std::unordered_map<Entity, std::vector<std::type_index>> entities;
     uint32_t next_id = 0;
     std::queue<uint32_t> available_ids;
     std::unordered_map<uint32_t, uint32_t> generations;
+    std::unordered_map<std::type_index, std::unique_ptr<Resource>> resources;
 };
