@@ -2,7 +2,6 @@
 
 #include <csignal>
 #include <iostream>
-#include <string.h>
 
 #include <epoxy/gl.h>
 
